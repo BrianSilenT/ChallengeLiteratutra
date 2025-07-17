@@ -26,7 +26,7 @@ Aplicación backend desarrollada en Java con Spring Boot que permite buscar libr
 ## 1. Clona el repositorio:
 
 bash
-git clone https://github.com/tu-usuario/gestor-libros.git
+git clone https://github.com/BrianSilenT/ChallengeLiteratutra.git
 cd gestor-libros
 
 ## 2. Configura tu base de datos
