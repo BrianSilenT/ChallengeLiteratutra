@@ -45,3 +45,44 @@ Al iniciar la app, verás en consola:
 3. Listar todos los autores registrados
 4. Listar autores vivos en un año específico
 5. Salir
+
+# Ejemplo :
+📖 Ingresa el título del libro: Queen
+✅ Resultado:
+Título: Spenser's The Faerie Queene, Book I
+Idiomas: [en]
+Descargas: 9782.0
+
+# 🛠️ Estructura del proyecto
+├── model
+│   ├── DatosLibros.java
+│   ├── DatosAutor.java
+│   ├── AutorDTO.java
+│   └── Datos.java
+├── service
+│   ├── LibroService.java
+│   ├── AutorService.java
+│   └── ConsumoApi.java
+├── repository
+│   ├── LibroRepository.java
+│   └── AutorRepository.java
+├── principal
+│   └── Principal.java
+
+
+
+# 🏗️ Extensiones futuras
+- [ ] API REST con controladores HTTP
+- [ ] Validaciones con Bean Validation (JSR 380)
+- [ ] Autenticación con Spring Security
+- [ ] Paginación en listados
+- [ ] Documentación Swagger
+
+# 🙌 Autor
+Proyecto desarrollado por [Brian] como parte del challenge de backend ofrecido por Alura Latam.
+
+# 📬 Contacto / Contribuciones
+¿Quieres mejorar esta app? ¡Te invito a hacer forks, pull requests o sugerencias!
+
+
+
