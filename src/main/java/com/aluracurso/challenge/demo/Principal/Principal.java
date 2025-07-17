@@ -5,6 +5,7 @@ import com.aluracurso.challenge.demo.model.DatosAutor;
 import com.aluracurso.challenge.demo.service.LibroService;
 import com.aluracurso.challenge.demo.service.AutorService;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,9 +33,14 @@ public class Principal {
                 5. Salir
                 """);
 
-            System.out.print("Seleccione una opción: ");
-            opcion = teclado.nextInt();
-            teclado.nextLine(); // Limpia buffer
+            try {
+                opcion = teclado.nextInt();
+                teclado.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("⚠️ Entrada inválida. Usa números para las opciones.");
+                teclado.nextLine(); // limpiar input malformado
+                continue;
+            }
 
             switch (opcion) {
                 case 1 -> {

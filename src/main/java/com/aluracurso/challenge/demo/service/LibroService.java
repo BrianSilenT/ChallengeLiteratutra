@@ -1,7 +1,10 @@
 package com.aluracurso.challenge.demo.service;
 
+import com.aluracurso.challenge.demo.model.AutorDTO;
+import com.aluracurso.challenge.demo.model.DatosAutor;
 import com.aluracurso.challenge.demo.model.DatosLibros;
 import com.aluracurso.challenge.demo.model.Datos;
+import com.aluracurso.challenge.demo.repository.AutorRepository;
 import com.aluracurso.challenge.demo.repository.LibroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,9 @@ public class LibroService {
 
     @Autowired
     private ConvierteDatos convierteDatos;
+    @Autowired
+    private AutorRepository autorRepository;
+
 
     // 🔍 Buscar por título, desde BD o API
     public DatosLibros buscarLibroPorTitulo(String titulo) {
@@ -36,10 +42,24 @@ public class LibroService {
         Datos datos = convierteDatos.obtenerDatos(json, Datos.class);
 
         List<DatosLibros> libros = datos.resultado();
-
         if (!libros.isEmpty()) {
-            DatosLibros libroEncontrado = libros.get(0); // Tomamos el primero que coincide
+            DatosLibros libroEncontrado = libros.get(0);
+
+            // 🔁 Transformar AutorDTO → DatosAutor
+            List<AutorDTO> autoresDTO = libroEncontrado.getAuthors(); // ← este campo debe existir en DatosLibros
+            List<DatosAutor> autoresConvertidos = autoresDTO.stream()
+                    .map(dto -> {
+                        DatosAutor autor = new DatosAutor();
+                        autor.setNombre(dto.getNombre());
+                        autor.setFechaDeNacimiento(dto.getFechaDeNacimiento());
+                        return autor;
+                    })
+                    .toList();
+
+            autoresConvertidos.forEach(autorRepository::save);
+            libroEncontrado.setAutores(autoresConvertidos);
             libroRepository.save(libroEncontrado);
+
             System.out.println("💾 Libro guardado en BD.");
             return libroEncontrado;
         }
@@ -48,9 +68,12 @@ public class LibroService {
         return null;
     }
 
+
+
     // 📋 Listar todos los libros
     public List<DatosLibros> listarLibros() {
         return libroRepository.findAll();
     }
+
 
 }

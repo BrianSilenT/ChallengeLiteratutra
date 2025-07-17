@@ -17,7 +17,7 @@ public class DatosAutor {
     @JsonAlias("birth_year")
     private Integer fechaDeNacimiento;
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "autores")
     private List<DatosLibros> libros = new ArrayList<>();
 
     public String getNombre() {
@@ -30,6 +30,14 @@ public class DatosAutor {
 
     public List<DatosLibros> getLibros() {
         return libros;
+    }
+
+    public void setFechaDeNacimiento(Integer fechaDeNacimiento) {
+        this.fechaDeNacimiento = fechaDeNacimiento;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     @Override
