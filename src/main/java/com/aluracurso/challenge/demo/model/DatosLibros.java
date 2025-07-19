@@ -22,7 +22,7 @@ public class DatosLibros {
     @JsonAlias("download_count")
     private Double numeroDeDescargas;
 
-    @ElementCollection
+    @ElementCollection (fetch = FetchType.EAGER)
     @JsonAlias("languages")
     private List<String> idiomas;
 
@@ -50,13 +50,6 @@ public class DatosLibros {
     public List<AutorDTO> getAuthors() {
         return authors;
     }
-
-    public void setAuthors(List<AutorDTO> authors) {
-        this.authors = authors;
-    }
-
-    // ✅ Getters y Setters
-    // (puedes generarlos automáticamente si usas Lombok con @Getter @Setter)
 
     public List<String> getIdiomas() {
         return idiomas;

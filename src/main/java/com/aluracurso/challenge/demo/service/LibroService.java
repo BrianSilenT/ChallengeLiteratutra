@@ -31,49 +31,49 @@ public class LibroService {
 
     // 🔍 Buscar por título, desde BD o API
     public DatosLibros buscarLibroPorTitulo(String titulo) {
-        Optional<DatosLibros> libroEnBD = libroRepository.findByTitulo(titulo);
-        if (libroEnBD.isPresent()) {
-            System.out.println("📚 Libro encontrado en la base de datos.");
-            return libroEnBD.get();
+
+        List<DatosLibros> libroEnBD = libroRepository.findByTituloIgnoreCaseContains(titulo);
+        {
+            if (!libroEnBD.isEmpty()) {
+                System.out.println("📚 Libro encontrado en la base de datos.");
+                return libroEnBD.get(0);
+            }
+
+            System.out.println("🌐 Libro no encontrado — consultando API...");
+            String json = consumoApi.obtenerDatos(URL_API + "?search=" + titulo.replace(" ", ""));
+            Datos datos = convierteDatos.obtenerDatos(json, Datos.class);
+
+            List<DatosLibros> libros = datos.resultado();
+            if (!libros.isEmpty()) {
+                DatosLibros libroEncontrado = libros.get(0);
+
+                // 🔁 Transformar AutorDTO → DatosAutor
+                List<AutorDTO> autoresDTO = libroEncontrado.getAuthors(); // ← este campo debe existir en DatosLibros
+                List<DatosAutor> autoresConvertidos = autoresDTO.stream()
+                        .map(dto -> {
+                            DatosAutor autor = new DatosAutor();
+                            autor.setNombre(dto.getNombre());
+                            autor.setFechaDeNacimiento(dto.getFechaDeNacimiento());
+                            return autor;
+                        })
+                        .toList();
+
+                autoresConvertidos.forEach(autorRepository::save);
+                libroEncontrado.setAutores(autoresConvertidos);
+                libroRepository.save(libroEncontrado);
+
+                System.out.println("💾 Libro guardado en BD.");
+                return libroEncontrado;
+            }
+
+            System.out.println("🚫 Libro no encontrado ni en API.");
+            return null;
         }
 
-        System.out.println("🌐 Libro no encontrado — consultando API...");
-        String json = consumoApi.obtenerDatos(URL_API + "?search=" + titulo.replace(" ", ""));
-        Datos datos = convierteDatos.obtenerDatos(json, Datos.class);
-
-        List<DatosLibros> libros = datos.resultado();
-        if (!libros.isEmpty()) {
-            DatosLibros libroEncontrado = libros.get(0);
-
-            // 🔁 Transformar AutorDTO → DatosAutor
-            List<AutorDTO> autoresDTO = libroEncontrado.getAuthors(); // ← este campo debe existir en DatosLibros
-            List<DatosAutor> autoresConvertidos = autoresDTO.stream()
-                    .map(dto -> {
-                        DatosAutor autor = new DatosAutor();
-                        autor.setNombre(dto.getNombre());
-                        autor.setFechaDeNacimiento(dto.getFechaDeNacimiento());
-                        return autor;
-                    })
-                    .toList();
-
-            autoresConvertidos.forEach(autorRepository::save);
-            libroEncontrado.setAutores(autoresConvertidos);
-            libroRepository.save(libroEncontrado);
-
-            System.out.println("💾 Libro guardado en BD.");
-            return libroEncontrado;
-        }
-
-        System.out.println("🚫 Libro no encontrado ni en API.");
-        return null;
     }
-
-
 
     // 📋 Listar todos los libros
     public List<DatosLibros> listarLibros() {
         return libroRepository.findAll();
     }
-
-
 }
